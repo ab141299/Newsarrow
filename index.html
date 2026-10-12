@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Arrow - सटीक, निष्पक्ष और सबसे तेज़ ख़बरें</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { red: '#E60000', dark: '#111827', accent: '#D97706' }
+          },
+          fontFamily: { sans: ['Mukta', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+    .animate-marquee { display: inline-block; white-space: nowrap; animation: marquee 30s linear infinite; }
+    .animate-marquee:hover { animation-play-state: paused; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 font-sans transition-colors duration-200">
+
+  <!-- Top Bar -->
+  <header class="bg-brand-dark text-white text-xs border-b border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <span class="text-gray-300" id="currentDate">आज की तारीख</span>
+        <span class="hidden sm:inline text-gray-500">|</span>
+        <span class="hidden sm:inline text-green-400"><i class="fa-solid fa-circle text-[8px] mr-1"></i> लाइव कवरेज</span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button id="adminBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold px-2.5 py-1 rounded transition text-xs flex items-center">
+          <i class="fa-solid fa-lock mr-1.5"></i> एडमिन लॉगिन
+        </button>
+        <button id="themeToggle" class="p-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-300">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="bg-red-600 text-white p-2 rounded-lg text-xl shadow-md"><i class="fa-solid fa-arrow-trend-up"></i></span>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">NEWS <span class="text-red-600">ARROW</span></h1>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="relative">
+          <input type="text" id="searchInput" placeholder="ख़बरें खोजें..." class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-1.5 pl-9 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 w-44 sm:w-64">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+        </div>
+      </div>
+    </div>
+    <!-- Categories Bar -->
+    <div class="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80">
+      <div class="max-w-7xl mx-auto px-4 py-2 flex items-center space-x-2 overflow-x-auto text-sm font-semibold" id="categoryNav">
+        <button class="cat-filter active px-3 py-1 rounded-full bg-red-600 text-white text-xs whitespace-nowrap" data-cat="all">सभी ख़बरें</button>
+        <button class="cat-filter px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-xs whitespace-nowrap" data-cat="देश">देश</button>
+        <button class="cat-filter px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-xs whitespace-nowrap" data-cat="विदेश">विदेश</button>
+        <button class="cat-filter px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-xs whitespace-nowrap" data-cat="व्यापार">व्यापार</button>
+        <button class="cat-filter px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-xs whitespace-nowrap" data-cat="खेल">खेल</button>
+        <button class="cat-filter px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-xs whitespace-nowrap" data-cat="मनोरंजन">मनोरंजन</button>
+        <button class="cat-filter px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-xs whitespace-nowrap" data-cat="तकनीक">तकनीक</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breaking News Marquee -->
+  <div class="bg-red-600 text-white py-1.5 px-4 flex items-center text-xs sm:text-sm font-medium overflow-hidden shadow-inner">
+    <span class="bg-brand-dark px-2.5 py-0.5 rounded font-bold mr-3 flex-shrink-0 uppercase tracking-wider text-[11px]">
+      <i class="fa-solid fa-bolt mr-1 text-yellow-400"></i> ताज़ा ख़बर
+    </span>
+    <div class="overflow-hidden w-full whitespace-nowrap">
+      <div class="animate-marquee inline-block" id="breakingNewsMarquee">
+        News Arrow पर आपका स्वागत है • ताज़ा ख़बरों के लिए जुड़े रहें • निष्पक्ष और तेज़ रिपोर्टिंग
+      </div>
+    </div>
+  </div>
+
+  <!-- News Content Grid -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center">
+        <span class="w-2.5 h-6 bg-red-600 rounded mr-2 inline-block"></span>
+        मुख्य समाचार
+      </h2>
+      <span class="text-xs text-gray-500" id="newsCount">0 ख़बरें उपलब्ध</span>
+    </div>
+
+    <!-- Cards Grid -->
+    <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Dynamic News Cards will render here -->
+    </div>
+  </main>
+
+  <!-- News Detail Modal -->
+  <div id="readModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="relative">
+        <img id="modalImage" class="w-full h-64 object-cover" src="" alt="News Image">
+        <button onclick="closeModal()" class="absolute top-3 right-3 bg-black/60 hover:bg-black text-white w-8 h-8 rounded-full flex items-center justify-center">
+          <i class="fa-solid fa-times"></i>
+        </button>
+        <span id="modalCategory" class="absolute bottom-3 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded"></span>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1">
+        <div class="text-xs text-gray-500 mb-2" id="modalDate"></div>
+        <h2 id="modalTitle" class="text-2xl font-extrabold mb-4 leading-snug"></h2>
+        <div id="modalContent" class="text-base leading-relaxed text-gray-700 dark:text-gray-300 space-y-4"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Modal (Login + News Management) -->
+  <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 max-w-3xl w-full rounded-2xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
+      
+      <!-- Login View -->
+      <div id="adminLoginView" class="max-w-sm mx-auto py-8 text-center">
+        <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-1">News Arrow एडमिन</h3>
+        <p class="text-xs text-gray-500 mb-6">ख़बरें जोड़ने या संपादित करने के लिए पासवर्ड डालें</p>
+        <form id="loginForm" class="space-y-4">
+          <input type="password" id="adminPassword" placeholder="पासवर्ड डालें (Default: admin123)" class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 text-center focus:ring-2 focus:ring-red-500 focus:outline-none">
+          <div class="flex space-x-2">
+            <button type="button" onclick="closeAdminModal()" class="w-1/2 py-2 border rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">रद्द करें</button>
+            <button type="submit" class="w-1/2 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700">लॉगिन</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Dashboard View (Shown after authentication) -->
+      <div id="adminDashboardView" class="hidden">
+        <div class="flex justify-between items-center border-b pb-4 mb-6">
+          <h3 class="text-xl font-bold text-red-600 flex items-center">
+            <i class="fa-solid fa-pen-nib mr-2"></i> एडमिन डैशबोर्ड (नई ख़बर जोड़ें)
+          </h3>
+          <div class="flex space-x-2">
+            <button id="adminLogoutBtn" class="text-xs bg-gray-200 dark:bg-gray-700 px-3 py-1.5 rounded hover:bg-gray-300">लॉगआउट</button>
+            <button onclick="closeAdminModal()" class="text-gray-500 hover:text-black dark:hover:text-white px-2"><i class="fa-solid fa-times text-lg"></i></button>
+          </div>
+        </div>
+
+        <!-- Add Post Form -->
+        <form id="addNewsForm" class="space-y-4 mb-8">
+          <div>
+            <label class="block text-xs font-bold mb-1">समाचार का शीर्षक (Headline) *</label>
+            <input type="text" id="postTitle" required placeholder="जैसे: भारत ने रचा इतिहास, नया मिशन सफल..." class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold mb-1">श्रेणी (Category) *</label>
+              <select id="postCategory" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                <option value="देश">देश</option>
+                <option value="विदेश">विदेश</option>
+                <option value="व्यापार">व्यापार</option>
+                <option value="खेल">खेल</option>
+                <option value="मनोरंजन">मनोरंजन</option>
+                <option value="तकनीक">तकनीक</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold mb-1">फोटो लिंक (या नीचे अपलोड करें)</label>
+              <input type="url" id="postImageUrl" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold mb-1">या डिवाइस से फोटो चुनें</label>
+            <input type="file" id="postImageFile" accept="image/*" class="text-xs w-full text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold mb-1">पूरी ख़बर का विवरण (Article Body) *</label>
+            <textarea id="postContent" rows="4" required placeholder="यहाँ विस्तार से समाचार लिखें..." class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <input type="checkbox" id="postIsBreaking" class="w-4 h-4 text-red-600 rounded">
+            <label for="postIsBreaking" class="text-xs font-bold cursor-pointer">ब्रेकिंग न्यूज़ टिकर में भी दिखाएं (Top Marquee)</label>
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-md transition">
+            🚀 खबर प्रकाशित करें (Publish News)
+          </button>
+        </form>
+
+        <!-- Existing Posts List for deletion -->
+        <h4 class="text-sm font-bold border-b pb-2 mb-3">मौजूदा ख़बरें (प्रबंधन)</h4>
+        <div id="adminPostsList" class="space-y-2 max-h-60 overflow-y-auto">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Initial Seed Data
+    const defaultNews = [
+      {
+        id: '1',
+        title: 'भारतीय अंतरिक्ष अनुसंधान: गगनयान मिशन के लिए तैयारी पूरी, अंतिम परीक्षण सफल',
+        category: 'देश',
+        image: 'https://images.unsplash.com/photo-1517976487507-5b6533d44e7c?w=800&auto=format&fit=crop',
+        content: 'भारतीय अंतरिक्ष अनुसंधान संगठन (ISRO) ने मानवयुक्त अंतरिक्ष मिशन गगनयान के लिए सभी अहम परीक्षण सफलतापूर्वक पूरे कर लिए हैं। इस मिशन के जरिए भारतीय अंतरिक्ष यात्रियों को पृथ्वी की निचली कक्षा में भेजा जाएगा।',
+        date: '12 अक्टूबर 2026',
+        isBreaking: true
+      },
+      {
+        id: '2',
+        title: 'शेयर बाज़ार में रिकॉर्ड तेज़ी: सेंसेक्स और निफ्टी ने बनाया नया उच्चतम स्तर',
+        category: 'व्यापार',
+        image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&auto=format&fit=crop',
+        content: 'ग्लोबल संकेतों और मजबूत घरेलू अर्थव्यवस्था के दम पर भारतीय शेयर बाजार में भारी उछाल दर्ज किया गया। बैंकिंग और आईटी शेयरों में निवेशकों की भारी खरीदारी देखने को मिली।',
+        date: '12 अक्टूबर 2026',
+        isBreaking: true
+      },
+      {
+        id: '3',
+        title: 'टी20 विश्व कप फाइनल: भारत ने शानदार प्रदर्शन के साथ ट्रॉफी पर किया कब्ज़ा',
+        category: 'खेल',
+        image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&auto=format&fit=crop',
+        content: 'भारतीय टीम ने रोमांचक मुकाबले में जीत हासिल कर ट्रॉफी अपने नाम की। पूरी टीम के शानदार समन्वय और गेंदबाज़ी ने मैच का रुख अपनी ओर मोड़ दिया।',
+        date: '11 अक्टूबर 2026',
+        isBreaking: false
+      }
+    ];
+
+    // State
+    let articles = JSON.parse(localStorage.getItem('news_arrow_articles')) || defaultNews;
+    let selectedCat = 'all';
+    let searchQuery = '';
+    let isAdminLoggedIn = false;
+
+    // Elements
+    const newsGrid = document.getElementById('newsGrid');
+    const newsCount = document.getElementById('newsCount');
+    const breakingMarquee = document.getElementById('breakingNewsMarquee');
+    const searchInput = document.getElementById('searchInput');
+    const categoryNav = document.getElementById('categoryNav');
+
+    // Date
+    const today = new Date();
+    document.getElementById('currentDate').textContent = today.toLocaleDateString('hi-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    // Dark Mode Toggle
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    // Render Articles
+    function renderNews() {
+      const filtered = articles.filter(item => {
+        const matchCat = (selectedCat === 'all' || item.category === selectedCat);
+        const matchSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || item.content.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchCat && matchSearch;
+      });
+
+      newsCount.textContent = `${filtered.length} ख़बरें उपलब्ध`;
+
+      if (filtered.length === 0) {
+        newsGrid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500">कोई खबर नहीं मिली।</div>`;
+        return;
+      }
+
+      newsGrid.innerHTML = filtered.map(item => `
+        <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow hover:shadow-lg transition cursor-pointer border border-gray-100 dark:border-gray-700 flex flex-col" onclick="openModal('${item.id}')">
+          <div class="relative h-48 overflow-hidden bg-gray-200">
+            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover hover:scale-105 transition duration-300" onerror="this.src='https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop'">
+            <span class="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded shadow">${item.category}</span>
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <span class="text-[11px] text-gray-400 block mb-1">${item.date}</span>
+              <h3 class="font-bold text-base leading-snug line-clamp-2 hover:text-red-600 transition mb-2">${item.title}</h3>
+              <p class="text-xs text-gray-600 dark:text-gray-300 line-clamp-3">${item.content}</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs text-red-600 font-semibold">
+              <span>पूरा पढ़ें <i class="fa-solid fa-arrow-right ml-1"></i></span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Update Marquee
+      const breaking = articles.filter(a => a.isBreaking).map(a => `• ${a.title}`).join('   ');
+      breakingMarquee.textContent = breaking || 'News Arrow पर आपका स्वागत है • ताज़ा ख़बरों के लिए जुड़े रहें';
+    }
+
+    // Category Filter
+    categoryNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cat-filter');
+      if (!btn) return;
+      document.querySelectorAll('.cat-filter').forEach(b => {
+        b.classList.remove('bg-red-600', 'text-white');
+        b.classList.add('hover:bg-gray-200');
+      });
+      btn.classList.add('bg-red-600', 'text-white');
+      btn.classList.remove('hover:bg-gray-200');
+      selectedCat = btn.dataset.cat;
+      renderNews();
+    });
+
+    // Search Filter
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderNews();
+    });
+
+    // Modal Details
+    window.openModal = function(id) {
+      const item = articles.find(a => a.id === id);
+      if (!item) return;
+      document.getElementById('modalImage').src = item.image;
+      document.getElementById('modalCategory').textContent = item.category;
+      document.getElementById('modalDate').textContent = item.date;
+      document.getElementById('modalTitle').textContent = item.title;
+      document.getElementById('modalContent').innerHTML = `<p>${item.content.replace(/\n/g, '<br><br>')}</p>`;
+      document.getElementById('readModal').classList.remove('hidden');
+    }
+
+    window.closeModal = function() {
+      document.getElementById('readModal').classList.add('hidden');
+    }
+
+    // Admin Panel Logic
+    const adminBtn = document.getElementById('adminBtn');
+    const adminModal = document.getElementById('adminModal');
+    const adminLoginView = document.getElementById('adminLoginView');
+    const adminDashboardView = document.getElementById('adminDashboardView');
+    const loginForm = document.getElementById('loginForm');
+    const addNewsForm = document.getElementById('addNewsForm');
+    const adminPostsList = document.getElementById('adminPostsList');
+
+    adminBtn.addEventListener('click', () => {
+      adminModal.classList.remove('hidden');
+      if (isAdminLoggedIn) {
+        showDashboard();
+      } else {
+        adminLoginView.classList.remove('hidden');
+        adminDashboardView.classList.add('hidden');
+      }
+    });
+
+    window.closeAdminModal = function() {
+      adminModal.classList.add('hidden');
+    }
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const pwd = document.getElementById('adminPassword').value;
+      if (pwd === 'admin123') {
+        isAdminLoggedIn = true;
+        showDashboard();
+      } else {
+        alert('गलत पासवर्ड! कृपया पुनः प्रयास करें।');
+      }
+    });
+
+    document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+      isAdminLoggedIn = false;
+      adminLoginView.classList.remove('hidden');
+      adminDashboardView.classList.add('hidden');
+      document.getElementById('adminPassword').value = '';
+    });
+
+    function showDashboard() {
+      adminLoginView.classList.add('hidden');
+      adminDashboardView.classList.remove('hidden');
+      renderAdminPosts();
+    }
+
+    function renderAdminPosts() {
+      adminPostsList.innerHTML = articles.map(item => `
+        <div class="flex items-center justify-between p-2.5 rounded bg-gray-50 dark:bg-gray-700 border text-xs">
+          <div class="flex items-center space-x-2 truncate mr-2">
+            <span class="bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold text-[10px]">${item.category}</span>
+            <span class="truncate font-semibold">${item.title}</span>
+          </div>
+          <button onclick="deletePost('${item.id}')" class="text-red-500 hover:text-red-700 p-1 flex-shrink-0" title="हटाएं">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    window.deletePost = function(id) {
+      if (confirm('क्या आप वाकई इस खबर को हटाना चाहते हैं?')) {
+        articles = articles.filter(a => a.id !== id);
+        saveAndRefresh();
+        renderAdminPosts();
+      }
+    }
+
+    // Add News Submit
+    addNewsForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('postTitle').value;
+      const category = document.getElementById('postCategory').value;
+      const content = document.getElementById('postContent').value;
+      const isBreaking = document.getElementById('postIsBreaking').checked;
+      let imageUrl = document.getElementById('postImageUrl').value.trim();
+
+      const fileInput = document.getElementById('postImageFile');
+      if (fileInput.files && fileInput.files[0]) {
+        imageUrl = await toBase64(fileInput.files[0]);
+      } else if (!imageUrl) {
+        imageUrl = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop';
+      }
+
+      const newArticle = {
+        id: Date.now().toString(),
+        title,
+        category,
+        image: imageUrl,
+        content,
+        date: new Date().toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' }),
+        isBreaking
+      };
+
+      articles.unshift(newArticle);
+      saveAndRefresh();
+      addNewsForm.reset();
+      alert('खबर सफलतापूर्वक प्रकाशित हो गई!');
+      renderAdminPosts();
+    });
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+
+    function saveAndRefresh() {
+      localStorage.setItem('news_arrow_articles', JSON.stringify(articles));
+      renderNews();
+    }
+
+    // Initial render
+    renderNews();
+  </script>
+</body>
+</html>
