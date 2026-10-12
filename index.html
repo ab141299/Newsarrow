@@ -210,35 +210,7 @@
   <!-- Scripts -->
   <script>
     // Initial Seed Data
-    const defaultNews = [
-      {
-        id: '1',
-        title: 'भारतीय अंतरिक्ष अनुसंधान: गगनयान मिशन के लिए तैयारी पूरी, अंतिम परीक्षण सफल',
-        category: 'देश',
-        image: 'https://images.unsplash.com/photo-1517976487507-5b6533d44e7c?w=800&auto=format&fit=crop',
-        content: 'भारतीय अंतरिक्ष अनुसंधान संगठन (ISRO) ने मानवयुक्त अंतरिक्ष मिशन गगनयान के लिए सभी अहम परीक्षण सफलतापूर्वक पूरे कर लिए हैं। इस मिशन के जरिए भारतीय अंतरिक्ष यात्रियों को पृथ्वी की निचली कक्षा में भेजा जाएगा।',
-        date: '12 अक्टूबर 2026',
-        isBreaking: true
-      },
-      {
-        id: '2',
-        title: 'शेयर बाज़ार में रिकॉर्ड तेज़ी: सेंसेक्स और निफ्टी ने बनाया नया उच्चतम स्तर',
-        category: 'व्यापार',
-        image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&auto=format&fit=crop',
-        content: 'ग्लोबल संकेतों और मजबूत घरेलू अर्थव्यवस्था के दम पर भारतीय शेयर बाजार में भारी उछाल दर्ज किया गया। बैंकिंग और आईटी शेयरों में निवेशकों की भारी खरीदारी देखने को मिली।',
-        date: '12 अक्टूबर 2026',
-        isBreaking: true
-      },
-      {
-        id: '3',
-        title: 'टी20 विश्व कप फाइनल: भारत ने शानदार प्रदर्शन के साथ ट्रॉफी पर किया कब्ज़ा',
-        category: 'खेल',
-        image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&auto=format&fit=crop',
-        content: 'भारतीय टीम ने रोमांचक मुकाबले में जीत हासिल कर ट्रॉफी अपने नाम की। पूरी टीम के शानदार समन्वय और गेंदबाज़ी ने मैच का रुख अपनी ओर मोड़ दिया।',
-        date: '11 अक्टूबर 2026',
-        isBreaking: false
-      }
-    ];
+    const defaultNews = [];
 
     // State
     let articles = JSON.parse(localStorage.getItem('news_arrow_articles')) || defaultNews;
